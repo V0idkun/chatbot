@@ -98,7 +98,7 @@ pairs =[
     ],
     [
         r"(what('s| is) the difference (between|of) (anime|japanese animation) (and|&|vs) (cartoons|cartoon|western animation)|(anime vs cartoon))",
-        ["While both are animated, anime tends to focus more on deep plots, emotions, and character development. It's also culturally tied to Japan."]",
+        ["While both are animated, anime tends to focus more on deep plots, emotions, and character development. It's also culturally tied to Japan."]
     ],
     [
         r"(thank you|thanks)",
