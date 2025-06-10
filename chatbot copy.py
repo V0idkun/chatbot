@@ -1,10 +1,10 @@
 import spacy
 import nltk
 import re
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
-nltk.download('averaged_perceptron_tagger')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
+# nltk.download('averaged_perceptron_tagger')
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -15,9 +15,9 @@ import streamlit as st
 
 # Load the text file and preprocess the data
 with open('ANIME BEGINNERS.txt', 'r', encoding='utf-8') as f:
-    data = f.read()  # Remove the .replace('\n', ' ')
+    data = f.read().replace('\n', ' ')
 
-sections = re.split(r"\n+(?=\d+\.\s)", data)  # Note the \n+ to handle multiple newlines
+sections = re.split(r"\n(?=\d+\.\s)", data)
 # Tokenize the text into sentences
 sentences = [section.strip() for section in sections if section.strip()]
 # Define a function to preprocess each sentence
@@ -42,38 +42,23 @@ for section in sections:
 
 # Define a function to find the most relevant sentence given a query
 def get_most_relevant_sentence(query):
+    # Preprocess the query
     query = preprocess(query)
+    # Compute the similarity between the query and each sentence in the text
     max_similarity = 0
     most_relevant_sentence = ""
-    
-    for original, processed in corpus:
-        # Split into header and content
-        parts = re.split(r'^(?:\d+\.\s*)?(.*?)(?:\n|$)', original, maxsplit=1, flags=re.MULTILINE)
-        if len(parts) > 2:
-            header = parts[1].strip()
-            content = parts[2].strip()
-            
-            # Check both header and content
-            for text in [header, content]:
-                if not text:
-                    continue
-                    
-                processed_text = preprocess(text)
-                similarity = len(set(query).intersection(processed_text)) / float(len(set(query).union(processed_text))) if len(set(query).union(processed_text)) > 0 else 0
-                
-                if similarity > max_similarity:
-                    max_similarity = similarity
-                    most_relevant_sentence = text.strip()
-    
-    return most_relevant_sentence if most_relevant_sentence else "I couldn't find a relevant answer."
-
+    for sentence in corpus:
+        similarity = len(set(query).intersection(sentence)) / float(len(set(query).union(sentence)))
+        if similarity > max_similarity:
+            max_similarity = similarity
+            most_relevant_sentence = " ".join(sentence)
+    return most_relevant_sentence
 
 def chatbot(question):
     # Find the most relevant sentence
     most_relevant_sentence = get_most_relevant_sentence(question)
     # Return the answer
-    return most_relevant_sentence if most_relevant_sentence else "I couldn't find a relevant answer. Please try another question."
-
+    return most_relevant_sentence
 # Initialize session state for chat history
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
@@ -99,6 +84,19 @@ def main():
     # Display chat history
     for speaker, message in st.session_state.chat_history:
         st.write(f"**{speaker}:** {message}")
-
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
